@@ -55,6 +55,9 @@ if ($execdanamasuk && $execdanakeluar) {
           <a class="nav-link" href="../pegawai">Pegawai</a>
         </li>
         <li class="nav-item">
+          <a class="nav-link" href="../pegawai?login=show">Login</a>
+        </li>
+        <li class="nav-item">
           <a class="nav-link active" href="danadesa.php">Dana Desa</a>
         </li>
       </ul>
@@ -103,8 +106,8 @@ if ($execdanamasuk && $execdanakeluar) {
             <thead>
             <tr>
               <th>No</th>
-              <th>Sumber pemasukan</th>
-              <th width="2">Tanggal Masuk</th>
+              <th>Dana Keluar</th>
+              <th width="2">Tanggal Keluar</th>
               <th>Nominal</th>
             </tr>
           </thead>
