@@ -62,10 +62,9 @@ if ($execdanamasuk && $execdanakeluar) {
               </a>
               <ul class="dropdown-menu dropdown-menu-dark">
                 <li><a class="dropdown-item" href="../pegawai?logout">Logout</a></li>
-                <li><a class="dropdown-item" href="../pegawai/pembayaran.php">Pembayaran PDAM</a></li>
-                <li><a class="dropdown-item" href="#">Something else here</a></li>
-                <li><a class="dropdown-item" href="#">Something else here</a></li>
-                <li><a class="dropdown-item" href="#">Something else here</a></li>
+                <li><a class="dropdown-item" href="pembayaran.php">Pembayaran PDAM</a></li>
+                <li><a class="dropdown-item" href="../pegawai/?tambahanggota">Tambah Anggota</a></li>
+                <li><a class="dropdown-item" href="../pegawai/dataanggota.php">Data Anggota</a></li>
               </ul>
             </li>
           <?php else : ?>

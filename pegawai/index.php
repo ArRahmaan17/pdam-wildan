@@ -33,6 +33,25 @@ if (isset($_GET['editpegawai'])) {
   $data = mysqli_fetch_array($exec, MYSQLI_ASSOC);
 }
 
+if (isset($_GET['editanggota'])) {
+  $param =  $_GET['editanggota'];
+  $query = "SELECT * FROM anggota WHERE id_anggota = $param";
+  $exec = mysqli_query($conn, $query);
+  $data = mysqli_fetch_array($exec, MYSQLI_ASSOC);
+}
+
+if (isset($_POST['proseseditanggota'])) {
+  $id = $_POST['id_anggota'];
+  $nama = $_POST['nama_anggota'];
+  $nomer = $_POST['nomer_anggota'];
+  $jk = $_POST['jenis_kelamin'];
+  $query = "UPDATE anggota SET nama_anggota= '$nama', nomer_anggota= '$nomer', jenis_kelamin = '$jk' WHERE id_anggota= $id";
+  $exec = mysqli_query($conn, $query);
+  if ($exec) {
+    header("Location:../pegawai/dataanggota.php");
+  }
+}
+
 if (isset($_POST['proseseditpegawai'])) {
   $id = $_POST['id_pegawai'];
   $nama = $_POST['nama_pegawai'];
@@ -46,7 +65,6 @@ if (isset($_POST['proseseditpegawai'])) {
 
   if ($exec) {
     header("Location:../pegawai");
-  } else {
   }
 }
 if (isset($_GET['login'])) {
@@ -80,10 +98,11 @@ if (isset($_GET['tambahanggota'])) {
   $querykoderumah = "SELECT * FROM anggota";
   $execkoderumah = mysqli_query($conn, $querykoderumah);
   $jumlahanggota = mysqli_num_rows($execkoderumah) + 1;
+  $bulan = date('m') - 1;
   $koderumah = "DT" . str_pad($jumlahanggota, 3, '0', STR_PAD_LEFT);
   // var_dump($koderumah);
   if (isset($_POST['prosestambahanggota'])) {
-    $querytambahanggota = "INSERT INTO anggota VALUES (null, '$koderumah', '" . $_POST['nama'] . "', '" . $_POST['nomer'] . "', '" . $_POST['rt'] . "', '" . $_POST['jenis_kelamin'] . "', 0, 0, 0 )";
+    $querytambahanggota = "INSERT INTO anggota VALUES (null, '$koderumah', '" . $_POST['nama'] . "', '" . $_POST['nomer'] . "', '" . $_POST['rt'] . "', '" . $_POST['jenis_kelamin'] . "', 0, 0, $bulan )";
     $exectambahanggota = mysqli_query($conn, $querytambahanggota);
     if ($exectambahanggota) {
       header("location:../pegawai/cetakqr.php?kode=$koderumah");
@@ -136,8 +155,7 @@ if (isset($_GET['tambahanggota'])) {
                 <li><a class="dropdown-item" href="../pegawai?logout">Logout</a></li>
                 <li><a class="dropdown-item" href="pembayaran.php">Pembayaran PDAM</a></li>
                 <li><a class="dropdown-item" href="../pegawai/?tambahanggota">Tambah Anggota</a></li>
-                <li><a class="dropdown-item" href="#">Something else here</a></li>
-                <li><a class="dropdown-item" href="#">Something else here</a></li>
+                <li><a class="dropdown-item" href="../pegawai/dataanggota.php">Data Anggota</a></li>
               </ul>
             </li>
           <?php else : ?>
@@ -152,6 +170,49 @@ if (isset($_GET['tambahanggota'])) {
       </div>
     </div>
   </nav>
+  <?php if (isset($_GET['editanggota'])) : ?>
+    <div class="container-sm mx-auto">
+      <div class="col-12 mt-5">
+        <div class="h-100 p-5 bg-light border rounded-4 shadow-sm">
+          <div class="text-center mb-4">
+            <img src="" class="rounded" alt="LOGO KSM">
+          </div>
+          <form method="POST" action="" class="mx-auto col-12 col-lg-10" autocomplete="off">
+            <input type="hidden" name="id_anggota" value="<?= $data['id_anggota'] ?>">
+            <div class="mb-3">
+              <label for="nama" class="form-label">Kode Rumah Anggota</label>
+              <input type="text" value="<?= $data['kode_rumah'] ?>" class="form-control" name="kode_anggota" id="kode" readonly>
+            </div>
+            <div class="row">
+              <div class="col">
+                <div class="mb-3">
+                  <label for="nama" class="form-label">Nama Petugas</label>
+                  <input type="text" value="<?= $data['nama_anggota'] ?>" class="form-control" name="nama_anggota" id="nama">
+                </div>
+              </div>
+              <div class="col">
+                <label for="basic-url" class="form-label">Nomer Petugas</label>
+                <div class="input-group mb-3">
+                  <span class="input-group-text" id="basic-addon3">+62</span>
+                  <input type="number" required value="<?= $data['nomer_anggota'] ?>" class="form-control" name="nomer_anggota" id="basic-url" aria-describedby="basic-addon3">
+                </div>
+              </div>
+              <div class="col">
+                <div class="mb-3">
+                  <label class="form-label">Jenis Kelamin</label>
+                  <select class="form-select" name="jenis_kelamin">
+                    <option <?php ($data['jenis_kelamin'] == "lk") ? 'selected' : ''; ?> value="lk">Laki Laki</option>
+                    <option <?php ($data['jenis_kelamin'] == "pr") ? 'selected' : ''; ?> value="pr">Perempuan</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <input type="submit" class="btn btn-danger form-control" name="proseseditanggota" value="Edit Data">
+          </form>
+        </div>
+      </div>
+    </div>
+  <?php endif ?>
 
   <?php if (isset($_GET['tambahanggota'])) : ?>
     <div class="container-sm mx-auto">
@@ -281,6 +342,7 @@ if (isset($_GET['tambahanggota'])) {
       </div>
     </div>
   <?php endif ?>
+
   <?php if (isset($_GET['login'])) { ?>
     <div class="container-sm mx-auto">
       <div class="col-12 mt-5">
@@ -307,7 +369,8 @@ if (isset($_GET['tambahanggota'])) {
       </div>
     </div>
   <?php } ?>
-  <?php if (!isset($_GET['login']) && !isset($_GET['editpegawai']) && !isset($_GET['tambahpegawai']) && !isset($_GET['tambahanggota'])) { ?>
+
+  <?php if (!isset($_GET['login']) && !isset($_GET['editpegawai']) && !isset($_GET['editanggota']) && !isset($_GET['tambahpegawai']) && !isset($_GET['tambahanggota'])) { ?>
     <div class="container-sm mx-auto">
       <div class="col-12 mt-5">
         <div class="h-100 p-5 bg-light border rounded-4 shadow-sm">
@@ -343,7 +406,7 @@ if (isset($_GET['tambahanggota'])) {
                       <th scope="row"><?= $no ?></th>
                       <td><?= $p['nama_pegawai'] ?></td>
                       <td>
-                        <a class="text-success" target="_blank" href="https://wa.me/62<?= $p['nomer_pegawai'] ?>"><svg class="bi" width="30" height="30">
+                        <a class="text-success" target="_blank" href="https://wa.me/6262<?= $p['nomer_pegawai'] ?>"><svg class="bi" width="30" height="30">
                             <use xlink:href="#wa" />
                           </svg></a>
                       </td>

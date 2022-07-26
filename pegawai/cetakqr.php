@@ -30,14 +30,19 @@ $qrcode = (new QRCode($options))->render($full_url);
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <title>Create QR Codes in PHP</title>
-    <link rel="stylesheet" href="/css/styles.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
 </head>
 
-<body>
-    <h1>Creating QR Codes in PHP</h1>
-    <div class="container">
-        <img src='<?= $qrcode ?>' alt='QR Code' width='800' height='800'>
+<body class="text-center">
+    <div class="container mt-5">
+        <h1>Mohon Untuk lakukan Penangkapan Layar</h1>
+        <div class="container">
+            <img src='<?= $qrcode ?>' alt='QR Code' width='300' height='300'>
+            <p class="display-1"><?= $_GET['kode'] ?></p>
+        </div>
+
     </div>
+
 </body>
 
 </html>

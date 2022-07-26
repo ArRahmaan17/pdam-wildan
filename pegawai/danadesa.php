@@ -78,6 +78,9 @@ if (isset($_GET['logout'])) {
   session_destroy();
   header("Location:../pegawai");
 }
+if (isset($_GET['eksport'])) {
+  $print = 'yes';
+}
 
 ?>
 <!doctype html>
@@ -95,12 +98,38 @@ if (isset($_GET['logout'])) {
       background-size: auto;
       background-repeat: no-repeat;
     }
+
+    @media print {
+      #danamasuk {
+        display: none;
+      }
+
+      #tambahdana {
+        display: none;
+      }
+
+      #eksport {
+        display: none;
+      }
+
+      #footer {
+        display: none;
+      }
+
+      #danakeluar {
+        height: 100%;
+      }
+
+      #navbar {
+        display: none;
+      }
+    }
   </style>
 </head>
 
 <body>
   <?php include '../icon.html'; ?>
-  <nav class="navbar sticky-top navbar-expand-sm bg-light shadow-sm">
+  <nav id="navbar" class="navbar sticky-top navbar-expand-sm bg-light shadow-sm">
     <div class="container">
       <a class="navbar-brand" href="../anggota">KSM Daya Tirta</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -123,8 +152,7 @@ if (isset($_GET['logout'])) {
                 <li><a class="dropdown-item" href="../pegawai?logout">Logout</a></li>
                 <li><a class="dropdown-item" href="pembayaran.php">Pembayaran PDAM</a></li>
                 <li><a class="dropdown-item" href="../pegawai/?tambahanggota">Tambah Anggota</a></li>
-                <li><a class="dropdown-item" href="#">Something else here</a></li>
-                <li><a class="dropdown-item" href="#">Something else here</a></li>
+                <li><a class="dropdown-item" href="../pegawai/dataanggota.php">Data Anggota</a></li>
               </ul>
             </li>
           <?php else : ?>
@@ -214,8 +242,8 @@ if (isset($_GET['logout'])) {
   <?php if (!isset($_GET['danamasuk']) && !isset($_GET['danakeluar']) && !isset($_GET['editmasuk']) && !isset($_GET['editkeluar'])) : ?>
     <div class="container mx-auto">
       <div class="row m-5">
-        <div class="col-lg-6 col-md-12">
-          <div class="table-responsive mx-1 my-1 shadow rounded-4 p-5">
+        <div id="danamasuk" class="col-lg-6 col-sm-12">
+          <div class="table-responsive mx-1 my-1 shadow rounded-4 p-5 overflow-y h-100">
             <table class="table">
               <div class="d-flex justify-content-between">
                 <h4>Sumber Dana masuk</h4>
@@ -258,15 +286,16 @@ if (isset($_GET['logout'])) {
             </table>
           </div>
         </div>
-        <div class="col-lg-6 col-md-12">
-          <div class="table-responsive mx-1 my-1 shadow rounded-4 p-5">
+        <div id="danakeluar" class="col-lg-6 col-sm-12">
+          <div class="table-responsive mx-1 my-1 shadow rounded-4 p-5 overflow-y h-100">
             <table class="table">
               <div class="d-flex justify-content-between">
                 <h4>Sumber Dana keluar</h4>
                 <?php if (isset($_SESSION['login'])) : ?>
-                  <a class="btn btn-info" href="?danakeluar">Tambah Pengeluaran Dana</a>
+                  <a id="tambahdana" class="btn btn-info" href="?danakeluar">Tambah Pengeluaran Dana</a>
                 <?php endif ?>
               </div>
+              <a id="eksport" class="btn btn-success" href="?eksport">Eksport</a>
               <thead>
                 <tr>
                   <th class="col-1">No</th>
@@ -305,7 +334,7 @@ if (isset($_GET['logout'])) {
       </div>
     </div>
   <?php endif ?>
-  <div class="container">
+  <div id="footer" class="container">
     <div class="sticky-bottom">
       <footer class="d-flex flex-wrap justify-content-between align-items-center p-4 m-1">
         <div class="col-md-4 d-flex align-items-center">
@@ -333,6 +362,14 @@ if (isset($_GET['logout'])) {
     </div>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <?php if (isset($print)) { ?>
+    <script>
+      $(document).ready(function() {
+        window.print();
+      })
+    </script>
+  <?php } ?>
 </body>
 
 </html>

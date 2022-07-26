@@ -97,8 +97,7 @@ if (isset($_GET['pembayaran'])) {
                                 <li><a class="dropdown-item" href="../pegawai?logout">Logout</a></li>
                                 <li><a class="dropdown-item" href="pembayaran.php">Pembayaran PDAM</a></li>
                                 <li><a class="dropdown-item" href="../pegawai/?tambahanggota">Tambah Anggota</a></li>
-                                <li><a class="dropdown-item" href="#">Something else here</a></li>
-                                <li><a class="dropdown-item" href="#">Something else here</a></li>
+                                <li><a class="dropdown-item" href="../pegawai/dataanggota.php">Data Anggota</a></li>
                             </ul>
                         </li>
                     <?php else : ?>
