@@ -5,18 +5,24 @@ $execsetting = mysqli_query($conn, $querysetting);
 $datasetting = mysqli_fetch_array($execsetting);
 $tanggal = date("Y-m-d");
 $bulan = date("m");
+$queryselectinformasi = "SELECT * FROM informasi WHERE status = 1";
+$execinformasi = mysqli_query($conn, $queryselectinformasi);
+$datainformasi = mysqli_fetch_all($execinformasi, MYSQLI_ASSOC);
 if (isset($_GET['keyword'])) {
     $keyword = $_GET['keyword'];
     $querycarianggota = "SELECT * FROM anggota LEFT JOIN pembayaran ON pembayaran.kode_rumah = anggota.kode_rumah WHERE anggota.nama_anggota = '$keyword' OR anggota.kode_rumah = '$keyword' OR anggota.nomer_anggota = '$keyword'";
-    // var_dump($querycarianggota);
-    // die();
     $execcarianggota = mysqli_query($conn, $querycarianggota);
     $data = mysqli_fetch_all($execcarianggota, MYSQLI_ASSOC);
 } else {
     $querycarianggota = "SELECT * FROM anggota WHERE anggota.bulan != $bulan";
     $execcarianggota = mysqli_query($conn, $querycarianggota);
     $data = mysqli_fetch_all($execcarianggota, MYSQLI_ASSOC);
-    // var_dump($querycarianggota);
+}
+if (isset($_GET['laporan'])) {
+    $queryanggotasudahbayar = "SELECT * FROM anggota WHERE anggota.bulan = $bulan";
+    $execanggotasudahbayar = mysqli_query($conn, $queryanggotasudahbayar);
+    $datasudahbayar = mysqli_fetch_all($execanggotasudahbayar, MYSQLI_ASSOC);
+    $print = 'yes';
 }
 if (isset($_GET['pembayaran'])) {
     $koderumah = $_GET['pembayaran'];
@@ -47,6 +53,7 @@ if (isset($_GET['pembayaran'])) {
                 unset($_SESSION['pemakaian-air']);
                 unset($_SESSION['total-biaya']);
                 header("location:../cetak.php?kode=$koderumah");
+                header("location:pembayaran.php");
             }
         } else {
             header("location:?pembayaran=$koderumah&pesan=gagal");
@@ -68,6 +75,16 @@ if (isset($_GET['pembayaran'])) {
             background-image: linear-gradient(#F8F9FA, #fff);
             background-size: auto;
             background-repeat: no-repeat;
+        }
+
+        @media print {
+            .navbar {
+                display: none;
+            }
+
+            div.sticky-bottom {
+                display: none;
+            }
         }
     </style>
 </head>
@@ -91,13 +108,14 @@ if (isset($_GET['pembayaran'])) {
                     <?php if (isset($_SESSION['login'])) : ?>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Fitur Pegawai
+                                <?= (isset($_SESSION['nama'])) ? $_SESSION['nama'] : 'Fitur Pegawai' ?>
                             </a>
-                            <ul class="dropdown-menu dropdown-menu-dark">
+                            <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="../pegawai?logout">Logout</a></li>
                                 <li><a class="dropdown-item" href="pembayaran.php">Pembayaran PDAM</a></li>
-                                <li><a class="dropdown-item" href="../pegawai/?tambahanggota">Tambah Anggota</a></li>
                                 <li><a class="dropdown-item" href="../pegawai/dataanggota.php">Data Anggota</a></li>
+                                <li><a class="dropdown-item" href="../pegawai/pembayaran.php?laporan">Laporan Pembayaran</a></li>
+                                <li><a class="dropdown-item" href="../pegawai/informasi.php">Informasi Sistem</a></li>
                             </ul>
                         </li>
                     <?php else : ?>
@@ -112,7 +130,106 @@ if (isset($_GET['pembayaran'])) {
             </div>
         </div>
     </nav>
+    <div class="col-12 bg-warning fw-bold py-2">
+        <marquee>Berita Hari Ini <?= $datainformasi[0]['isi_informasi'] ?></marquee>
+    </div>
     <div class="container-sm mx-auto">
+        <?php if (isset($_GET['laporan'])) { ?>
+            <div class="container-sm mx-auto">
+                <div class="card mt-5">
+                    <div class="card-header">
+                        <h5 class="d-inline-block">Anggota Yang Belum Melakukan Pembayaran</h5>
+                        <!-- <a href="../anggota"><span class="btn btn-secondary p-2 m-1 col-1">Back</span></a> -->
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th scope=" col">No</th>
+                                        <th scope="col">Nama Anggota</th>
+                                        <th scope="col">Nomer Anggota</th>
+                                        <th scope="col">Kode Rumah</th>
+                                        <th scope="col">Meteran Bulan Lalu</th>
+                                        <th scope="col">Meteran Bulan Ini</th>
+                                        <th scope="col">Pembayaran Terakhir</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?Php $no = 0 ?>
+                                    <?php if (count($data) > 0) { ?>
+                                        <?php foreach ($data as $a) : ?>
+                                            <?php $no++ ?>
+                                            <tr>
+                                                <th scope=" row"><?= $no ?></th>
+                                                <td><?= $a['nama_anggota'] ?></td>
+                                                <td><?= $a['nomer_anggota'] ?></td>
+                                                <td><?= $a['kode_rumah'] ?></td>
+                                                <td><?= $a['meteran_bulanlalu'] ?></td>
+                                                <td><?= $a['meteran_terakhir'] ?></td>
+                                                <td>
+                                                    <?php if ($a['bulan'] == date('m')) { ?>
+                                                        <a class="btn btn-info col-12" href="?cek=<?= $a['kode_rumah'] ?>">Sudah Bayar</a>
+                                                    <?php } else { ?>
+                                                        <a class="btn btn-warning col-12" href="?pembayaran=<?= $a['kode_rumah'] ?>">Belum Bayar</a>
+                                                    <?php } ?>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    <?php } ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="card mt-5">
+                    <div class="card-header">
+                        <h5 class="d-inline-block">Anggota Yang Sudah Melakukan Pembayaran</h5>
+                        <!-- <a href="../anggota"><span class="btn btn-secondary p-2 m-1 col-1">Back</span></a> -->
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th scope=" col">No</th>
+                                        <th scope="col">Nama Anggota</th>
+                                        <th scope="col">Nomer Anggota</th>
+                                        <th scope="col">Kode Rumah</th>
+                                        <th scope="col">Meteran Bulan Lalu</th>
+                                        <th scope="col">Meteran Bulan Ini</th>
+                                        <th scope="col">Pembayaran Terakhir</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?Php $no = 0 ?>
+                                    <?php if (count($datasudahbayar) > 0) { ?>
+                                        <?php foreach ($datasudahbayar as $a) : ?>
+                                            <?php $no++ ?>
+                                            <tr>
+                                                <th scope=" row"><?= $no ?></th>
+                                                <td><?= $a['nama_anggota'] ?></td>
+                                                <td><?= $a['nomer_anggota'] ?></td>
+                                                <td><?= $a['kode_rumah'] ?></td>
+                                                <td><?= $a['meteran_bulanlalu'] ?></td>
+                                                <td><?= $a['meteran_terakhir'] ?></td>
+                                                <td>
+                                                    <?php if ($a['bulan'] == date('m')) { ?>
+                                                        <a class="btn btn-info col-12" href="?cek=<?= $a['kode_rumah'] ?>">Sudah Bayar</a>
+                                                    <?php } else { ?>
+                                                        <a class="btn btn-warning col-12" href="?pembayaran=<?= $a['kode_rumah'] ?>">Belum Bayar</a>
+                                                    <?php } ?>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    <?php } ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <?php } ?>
         <?php if (isset($_GET['pembayaran'])) { ?>
             <div class="col-12 mt-5">
                 <div class="h-100 p-5 bg-light border rounded-4 shadow-sm">
@@ -202,18 +319,9 @@ if (isset($_GET['pembayaran'])) {
                 </div>
             </div>
         <?php } ?>
-        <?php if (!isset($_GET['pembayaran'])) { ?>
+        <?php if (!isset($_GET['pembayaran']) && !isset($_GET['laporan'])) { ?>
             <div class="col-12 mt-5">
                 <div class="h-100 p-5 bg-light border rounded-4 shadow-sm">
-                    <!-- <label for="exampleDataList" class="form-label">Datalist example</label>
-                    <input class="form-control" list="datalistOptions" id="exampleDataList" placeholder="Type to search...">
-                    <datalist id="datalistOptions">
-                        <option value="San Francisco">
-                        <option value="New York">
-                        <option value="Seattle">
-                        <option value="Los Angeles">
-                        <option value="Chicago">
-                    </datalist> -->
                     <div class="text-center mb-4">
                         <img src="" class="rounded" alt="LOGO KSM">
                     </div>
@@ -230,7 +338,7 @@ if (isset($_GET['pembayaran'])) {
             <div class="container-sm mx-auto">
                 <div class="card mt-5">
                     <div class="card-header">
-                        <h5 class="d-inline-block">Naggota Yang Belum Melakukan Pembayaran</h5>
+                        <h5 class="d-inline-block">Anggota Yang Belum Melakukan Pembayaran</h5>
                         <!-- <a href="../anggota"><span class="btn btn-secondary p-2 m-1 col-1">Back</span></a> -->
                     </div>
                     <div class="card-body h-25">
@@ -309,9 +417,15 @@ if (isset($_GET['pembayaran'])) {
             </div>
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     </div>
-    </div>
-    </div>
+    <?php if (isset($print)) { ?>
+        <script>
+            $(document).ready(function() {
+                window.print();
+            })
+        </script>
+    <?php } ?>
 </body>
 
 </html>

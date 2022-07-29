@@ -7,7 +7,9 @@ $querydanamasuk = "SELECT * FROM danamasuk";
 $querydanakeluar = "SELECT * FROM danakeluar";
 $querytotaldanamasuk = "SELECT SUM(nominal) as total FROM danamasuk";
 $querytotaldanakeluar = "SELECT SUM(nominal) as total FROM danakeluar";
-
+$queryselectinformasi = "SELECT * FROM informasi WHERE status = 1";
+$execinformasi = mysqli_query($conn, $queryselectinformasi);
+$datainformasi = mysqli_fetch_all($execinformasi, MYSQLI_ASSOC);
 
 $execdanamasuk = mysqli_query($conn, $querydanamasuk);
 $execdanakeluar = mysqli_query($conn, $querydanakeluar);
@@ -146,13 +148,13 @@ if (isset($_GET['eksport'])) {
           <?php if (isset($_SESSION['login'])) : ?>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Fitur Pegawai
+                <?= (isset($_SESSION['nama'])) ? $_SESSION['nama'] : 'Fitur Pegawai' ?>
               </a>
               <ul class="dropdown-menu dropdown-menu-dark">
                 <li><a class="dropdown-item" href="../pegawai?logout">Logout</a></li>
                 <li><a class="dropdown-item" href="pembayaran.php">Pembayaran PDAM</a></li>
-                <li><a class="dropdown-item" href="../pegawai/?tambahanggota">Tambah Anggota</a></li>
                 <li><a class="dropdown-item" href="../pegawai/dataanggota.php">Data Anggota</a></li>
+                <li><a class="dropdown-item" href="../pegawai/pembayaran.php?laporan">Laporan Pembayaran</a></li>
               </ul>
             </li>
           <?php else : ?>
@@ -167,6 +169,9 @@ if (isset($_GET['eksport'])) {
       </div>
     </div>
   </nav>
+  <div class="col-12 bg-warning fw-bold py-2">
+    <marquee>Berita Hari Ini <?= $datainformasi[0]['isi_informasi'] ?></marquee>
+  </div>
   <?php if (isset($_GET['editmasuk']) or isset($_GET['editkeluar'])) : ?>
     <div class="container-sm mx-auto">
       <div class="col-12 mt-5">
@@ -291,11 +296,13 @@ if (isset($_GET['eksport'])) {
             <table class="table">
               <div class="d-flex justify-content-between">
                 <h4>Sumber Dana keluar</h4>
-                <?php if (isset($_SESSION['login'])) : ?>
+                <?php if (isset($_SESSION['login']) && $_SESSION['role'] == 'admin') : ?>
                   <a id="tambahdana" class="btn btn-info" href="?danakeluar">Tambah Pengeluaran Dana</a>
                 <?php endif ?>
               </div>
-              <a id="eksport" class="btn btn-success" href="?eksport">Eksport</a>
+              <?php if (isset($_SESSION['login']) && $_SESSION['role'] == 'admin') { ?>
+                <a id="eksport" class="btn btn-success" href="?eksport">Eksport</a>
+              <?php } ?>
               <thead>
                 <tr>
                   <th class="col-1">No</th>

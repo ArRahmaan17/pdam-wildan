@@ -5,7 +5,9 @@ include '../koneksi.php';
 $query = "SELECT * FROM anggota";
 $exec = mysqli_query($conn, $query);
 $data = mysqli_fetch_all($exec, MYSQLI_ASSOC);
-
+$queryselectinformasi = "SELECT * FROM informasi WHERE status = 1";
+$execinformasi = mysqli_query($conn, $queryselectinformasi);
+$datainformasi = mysqli_fetch_all($execinformasi, MYSQLI_ASSOC);
 if (isset($_GET['logout'])) {
     session_destroy();
     header("Location:../pegawai");
@@ -51,13 +53,14 @@ if (isset($_GET['logout'])) {
                     <?php if (isset($_SESSION['login'])) : ?>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Fitur Pegawai
+                                <?= (isset($_SESSION['nama'])) ? $_SESSION['nama'] : 'Fitur Pegawai' ?>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-dark">
                                 <li><a class="dropdown-item" href="../pegawai?logout">Logout</a></li>
                                 <li><a class="dropdown-item" href="pembayaran.php">Pembayaran PDAM</a></li>
-                                <li><a class="dropdown-item" href="../pegawai/?tambahanggota">Tambah Anggota</a></li>
                                 <li><a class="dropdown-item" href="../pegawai/dataanggota.php">Data Anggota</a></li>
+                                <li><a class="dropdown-item" href="../pegawai/pembayaran.php?laporan">Laporan Pembayaran</a></li>
+                                <li><a class="dropdown-item" href="../pegawai/informasi.php">Informasi Sistem</a></li>
                             </ul>
                         </li>
                     <?php else : ?>
@@ -72,19 +75,16 @@ if (isset($_GET['logout'])) {
             </div>
         </div>
     </nav>
+    <div class="col-12 bg-warning fw-bold py-2">
+        <marquee>Berita Hari Ini <?= $datainformasi[0]['isi_informasi'] ?></marquee>
+    </div>
     <div class="container-sm mx-auto">
         <div class="col-12 mt-5">
             <div class="h-100 p-5 bg-light border rounded-4 shadow-sm">
                 <div class="text-center mb-4 d-flex justify-content-between">
                     <img src="" class="rounded" alt="LOGO KSM">
-                    <form class="d-flex" autocomplete="off">
-                        <input class="form-control mx-1" type="text" name="keyword">
-                        <input class="btn btn-info" type="submit" name="cari" value="Cari">
-                    </form>
-                </div>
-                <?php if (isset($_SESSION['login'])) : ?>
                     <a class="btn btn-info" href="index.php?tambahanggota">Tambah Anggota</a>
-                <?php endif ?>
+                </div>
                 <div class="table-responsive text-center">
                     <table class="table text-start">
                         <thead>
@@ -104,7 +104,7 @@ if (isset($_GET['logout'])) {
                                 <?php $no = 0 ?>
                                 <?php foreach ($data as $p) { ?>
                                     <?php $no++ ?>
-                                    <tr>
+                                    <tr class="align-middle">
                                         <th scope="row"><?= $no ?></th>
                                         <td><?= $p['nama_anggota'] ?></td>
                                         <td>
@@ -117,9 +117,9 @@ if (isset($_GET['logout'])) {
                                         <td><?= $p['rt'] ?></td>
                                         <td><?= ($p['jenis_kelamin'] == 'lk') ? "Laki Laki" : "Perempuan"; ?></td>
                                         <?php if (isset($_SESSION['login'])) : ?>
-                                            <td>
-                                                <a class="btn btn-warning form-control my-1" href="../pegawai/?editanggota=<?= $p['id_anggota'] ?>">Edit Anggota</a>
-                                                <a class="btn btn-success form-control my-1" target="blank" href="cetakqr.php?kode=<?= $p['kode_rumah'] ?>">Cetak Qr Code Anggota</a>
+                                            <td class="d-flex">
+                                                <a class="btn btn-warning mx-1" href="../pegawai/?editanggota=<?= $p['id_anggota'] ?>">Edit Anggota</a>
+                                                <a class="btn btn-success mx-1" target="blank" href="cetakqr.php?kode=<?= $p['kode_rumah'] ?>">Cetak Qr Code Anggota</a>
                                             </td>
                                         <?php endif ?>
                                     </tr>

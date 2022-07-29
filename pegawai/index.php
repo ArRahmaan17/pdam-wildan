@@ -5,7 +5,9 @@ include '../koneksi.php';
 $query = "SELECT * FROM Pegawai";
 $exec = mysqli_query($conn, $query);
 $data = mysqli_fetch_all($exec, MYSQLI_ASSOC);
-
+$queryselectinformasi = "SELECT * FROM informasi WHERE status = 1";
+$execinformasi = mysqli_query($conn, $queryselectinformasi);
+$datainformasi = mysqli_fetch_all($execinformasi, MYSQLI_ASSOC);
 if (isset($_GET['logout'])) {
   session_destroy();
   header("Location:../pegawai");
@@ -15,7 +17,6 @@ if (isset($_POST['prosestambahpegawai'])) {
   $nomer = $_POST['nomer_pegawai'];
   $jk = $_POST['jenis_kelamin'];
   $role = $_POST['role'];
-
   $query = "INSERT INTO pegawai VALUES(null,'$nama', '$nomer', '$jk', '$role',null)";
   var_dump($query);
   $exec = mysqli_query($conn, $query);
@@ -68,15 +69,17 @@ if (isset($_POST['proseseditpegawai'])) {
   }
 }
 if (isset($_GET['login'])) {
-  $_SESSION['kode'] = "KSM-" . date("d");
   if (isset($_POST['masuk'])) {
     $nama = $_POST['nama'];
     $role = $_POST['role'];
-    $query = "SELECT * FROM pegawai WHERE nama_pegawai LIKE '%$nama%' AND role = '$role'";
+    $query = "SELECT * FROM pegawai WHERE nama_pegawai like '$nama%' AND role = '$role'";
     $exec = mysqli_query($conn, $query);
     $data = mysqli_fetch_all($exec, MYSQLI_ASSOC);
     if (count($data) == 1) {
       $_SESSION['login'] = true;
+      $_SESSION['kode'] = "KSM-" . date("d");
+      $_SESSION['nama'] = $data[0]['nama_pegawai'];
+      $_SESSION['role'] = $data[0]['role'];
       header("Location:../pegawai");
     } else {
       echo "<script>alert('Request Tidak Dikenali, Mohon Diulang')</script>";
@@ -100,7 +103,6 @@ if (isset($_GET['tambahanggota'])) {
   $jumlahanggota = mysqli_num_rows($execkoderumah) + 1;
   $bulan = date('m') - 1;
   $koderumah = "DT" . str_pad($jumlahanggota, 3, '0', STR_PAD_LEFT);
-  // var_dump($koderumah);
   if (isset($_POST['prosestambahanggota'])) {
     $querytambahanggota = "INSERT INTO anggota VALUES (null, '$koderumah', '" . $_POST['nama'] . "', '" . $_POST['nomer'] . "', '" . $_POST['rt'] . "', '" . $_POST['jenis_kelamin'] . "', 0, 0, $bulan )";
     $exectambahanggota = mysqli_query($conn, $querytambahanggota);
@@ -149,13 +151,13 @@ if (isset($_GET['tambahanggota'])) {
           <?php if (isset($_SESSION['login'])) : ?>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Fitur Pegawai
+                <?= (isset($_SESSION['nama'])) ? $_SESSION['nama'] : 'Fitur Pegawai' ?>
               </a>
               <ul class="dropdown-menu dropdown-menu-dark">
                 <li><a class="dropdown-item" href="../pegawai?logout">Logout</a></li>
                 <li><a class="dropdown-item" href="pembayaran.php">Pembayaran PDAM</a></li>
-                <li><a class="dropdown-item" href="../pegawai/?tambahanggota">Tambah Anggota</a></li>
                 <li><a class="dropdown-item" href="../pegawai/dataanggota.php">Data Anggota</a></li>
+                <li><a class="dropdown-item" href="../pegawai/pembayaran.php?laporan">Laporan Pembayaran</a></li>
               </ul>
             </li>
           <?php else : ?>
@@ -170,6 +172,9 @@ if (isset($_GET['tambahanggota'])) {
       </div>
     </div>
   </nav>
+  <div class="col-12 bg-warning fw-bold py-2">
+    <marquee>Berita Hari Ini <?= $datainformasi[0]['isi_informasi'] ?></marquee>
+  </div>
   <?php if (isset($_GET['editanggota'])) : ?>
     <div class="container-sm mx-auto">
       <div class="col-12 mt-5">
@@ -359,7 +364,7 @@ if (isset($_GET['tambahanggota'])) {
             <div class="mb-3">
               <select class="form-select" name="role">
                 <option selected>Pilih salah Satu yang ada di list</option>
-                <option value="pengurus">Pengurus</option>
+                <option value="admin">Admin</option>
                 <option value="petugas">Petugas</option>
               </select>
             </div>
@@ -373,18 +378,14 @@ if (isset($_GET['tambahanggota'])) {
   <?php if (!isset($_GET['login']) && !isset($_GET['editpegawai']) && !isset($_GET['editanggota']) && !isset($_GET['tambahpegawai']) && !isset($_GET['tambahanggota'])) { ?>
     <div class="container-sm mx-auto">
       <div class="col-12 mt-5">
-        <div class="h-100 p-5 bg-light border rounded-4 shadow-sm">
+        <div class="h-75 p-5 bg-light border rounded-4 shadow-sm">
           <div class="text-center mb-4 d-flex justify-content-between">
             <img src="" class="rounded" alt="LOGO KSM">
-            <form class="d-flex" autocomplete="off">
-              <input class="form-control mx-1" type="text" name="keyword">
-              <input class="btn btn-info" type="submit" name="cari" value="Cari">
-            </form>
+            <?php if (isset($_SESSION['login'])) : ?>
+              <a class="btn btn-info" href="?tambahpegawai">Tambah Pegawai</a>
+            <?php endif ?>
           </div>
-          <?php if (isset($_SESSION['login'])) : ?>
-            <a class="btn btn-info" href="?tambahpegawai">Tambah Pegawai</a>
-          <?php endif ?>
-          <div class="table-responsive text-center">
+          <div class="table-responsive text-center ">
             <table class="table text-start">
               <thead>
                 <tr>

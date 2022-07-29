@@ -1,5 +1,8 @@
 <?php
 include '../koneksi.php';
+$queryselectinformasi = "SELECT * FROM informasi WHERE status = 1";
+$execinformasi = mysqli_query($conn, $queryselectinformasi);
+$datainformasi = mysqli_fetch_all($execinformasi, MYSQLI_ASSOC);
 if (isset($_GET['keyword'])) {
 	$keyword = $_GET['keyword'];
 	$querycarianggota = "SELECT * FROM anggota WHERE nama_anggota = '$keyword' OR kode_rumah = '$keyword' OR nomer_anggota = '$keyword'";
@@ -15,6 +18,7 @@ if (isset($_GET['cektransaksi'])) {
 	$querycektransaksi = "SELECT * FROM anggota WHERE kode_rumah = '$koderumah'";
 	$execcektransaksi = mysqli_query($conn, $querycarianggota);
 	$dataanggota = mysqli_fetch_array($execcektransaksi, MYSQLI_ASSOC);
+	$bulan = date("m");
 }
 ?>
 <!doctype html>
@@ -54,13 +58,14 @@ if (isset($_GET['cektransaksi'])) {
 					<?php if (isset($_SESSION['login'])) : ?>
 						<li class="nav-item dropdown">
 							<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-								Fitur Pegawai
+								<?= (isset($_SESSION['nama'])) ? $_SESSION['nama'] : 'Fitur Pegawai' ?>
 							</a>
-							<ul class="dropdown-menu dropdown-menu-dark">
+							<ul class="dropdown-menu">
 								<li><a class="dropdown-item" href="../pegawai?logout">Logout</a></li>
 								<li><a class="dropdown-item" href="pembayaran.php">Pembayaran PDAM</a></li>
-								<li><a class="dropdown-item" href="../pegawai/?tambahanggota">Tambah Anggota</a></li>
 								<li><a class="dropdown-item" href="../pegawai/dataanggota.php">Data Anggota</a></li>
+								<li><a class="dropdown-item" href="../pegawai/pembayaran.php?laporan">Laporan Pembayaran</a></li>
+								<li><a class="dropdown-item" href="../pegawai/informasi.php">Informasi Sistem</a></li>
 							</ul>
 						</li>
 					<?php else : ?>
@@ -75,11 +80,15 @@ if (isset($_GET['cektransaksi'])) {
 			</div>
 		</div>
 	</nav>
+	<div class="col-12 bg-warning fw-bold py-2">
+		<marquee>Berita Hari Ini <?= $datainformasi[0]['isi_informasi'] ?></marquee>
+	</div>
 	<div class="container-sm mx-auto">
 		<?php if (isset($_GET['cektransaksi'])) { ?>
 			<div class="col-12 mt-5">
 				<div class="h-100 p-5 bg-light border rounded-4 shadow-sm">
 					<div class="col-md-8 mx-auto">
+						<h3>Data Anggota <?= $dataanggota['nama_anggota'] ?></h3>
 						<div class="card mb-3">
 							<div class="card-body">
 								<div class="row shadow-sm py-3">
@@ -128,10 +137,33 @@ if (isset($_GET['cektransaksi'])) {
 								</div>
 							</div>
 						</div>
+						<div class="col-10">
+							<div class="mx-auto w-100">
+								<h5>Detail Pembayaran</h5>
+								<div class="row border-bottom">
+									<div class="col-5">Meteran Bulan Lalu :</div>
+									<div class="col-7"><?= $dataanggota['meteran_bulanlalu'] ?></div>
+								</div>
+								<div class="row border-bottom">
+									<div class="col-5">Meteran Bulan Ini :</div>
+									<div class="col-7">
+										<?php if ($dataanggota['bulan'] != $bulan) {
+											echo "Belum Melakukan Pembayaran";
+										} else {
+											echo $dataanggota['meteran_terakhir'];
+										} ?></div>
+								</div>
+								<div class="row border-bottom">
+									<div class="col-5">Bulan Terakhir Melakukan Pembayaran :</div>
+									<div class="col-7"><?= $dataanggota['bulan'] ?></div>
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
 		<?php } ?>
+
 		<?php if (!isset($_GET['cektransaksi'])) { ?>
 			<div class="col-12 mt-5">
 				<div class="h-100 p-5 bg-light border rounded-4 shadow-sm">
@@ -159,7 +191,7 @@ if (isset($_GET['cektransaksi'])) {
 							<table class="table table-striped" style="overflow-y:scroll;">
 								<thead>
 									<tr>
-										<th scope=" col">#</th>
+										<th scope=" col">No</th>
 										<th scope="col">Nama Anggota</th>
 										<th scope="col">Nomer Anggota</th>
 										<th scope="col">Kode Rumah</th>
@@ -167,10 +199,12 @@ if (isset($_GET['cektransaksi'])) {
 									</tr>
 								</thead>
 								<tbody>
+									<?php $no = 0 ?>
 									<?php if (count($data) > 1) { ?>
 										<?php foreach ($data as $a) : ?>
+											<?php $no++ ?>
 											<tr>
-												<th scope=" row">1</th>
+												<th scope=" row"><?= $no ?></th>
 												<td><?= $a['nama_anggota'] ?></td>
 												<td><?= $a['nomer_anggota'] ?></td>
 												<td><?= $a['kode_rumah'] ?></td>
@@ -195,6 +229,7 @@ if (isset($_GET['cektransaksi'])) {
 				</div>
 			</div>
 		<?php } ?>
+
 		<!-- footer -->
 		<div class=" container">
 			<div class="sticky-bottom">

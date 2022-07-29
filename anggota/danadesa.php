@@ -1,6 +1,9 @@
 <?php
 
 include '../koneksi.php';
+$queryselectinformasi = "SELECT * FROM informasi WHERE status = 1";
+$execinformasi = mysqli_query($conn, $queryselectinformasi);
+$datainformasi = mysqli_fetch_all($execinformasi, MYSQLI_ASSOC);
 
 $querydanamasuk = "SELECT * FROM danamasuk";
 $querydanakeluar = "SELECT * FROM danakeluar";
@@ -58,13 +61,14 @@ if ($execdanamasuk && $execdanakeluar) {
           <?php if (isset($_SESSION['login'])) : ?>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Fitur Pegawai
+                <?= (isset($_SESSION['nama'])) ? $_SESSION['nama'] : 'Fitur Pegawai' ?>
               </a>
-              <ul class="dropdown-menu dropdown-menu-dark">
+              <ul class="dropdown-menu">
                 <li><a class="dropdown-item" href="../pegawai?logout">Logout</a></li>
                 <li><a class="dropdown-item" href="pembayaran.php">Pembayaran PDAM</a></li>
-                <li><a class="dropdown-item" href="../pegawai/?tambahanggota">Tambah Anggota</a></li>
                 <li><a class="dropdown-item" href="../pegawai/dataanggota.php">Data Anggota</a></li>
+                <li><a class="dropdown-item" href="../pegawai/pembayaran.php?laporan">Laporan Pembayaran</a></li>
+                <li><a class="dropdown-item" href="../pegawai/informasi.php">Informasi Sistem</a></li>
               </ul>
             </li>
           <?php else : ?>
@@ -79,6 +83,9 @@ if ($execdanamasuk && $execdanakeluar) {
       </div>
     </div>
   </nav>
+  <div class="col-12 bg-warning fw-bold py-2">
+    <marquee>Berita Hari Ini <?= $datainformasi[0]['isi_informasi'] ?></marquee>
+  </div>
   <div class="container-sm mx-auto">
     <div class="row m-5">
       <div class="col-lg-6 col-md-12">
