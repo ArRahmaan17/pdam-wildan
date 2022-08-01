@@ -42,7 +42,8 @@ if (isset($_GET['pembayaran'])) {
     if (isset($_POST['selesaikan'])) {
         $koderumah = $_GET['pembayaran'];
         $querypembayaran = "INSERT INTO pembayaran VALUES (null, '$koderumah', '" . $_SESSION['meteran-awal'] . "','" . $_SESSION['meteran-akhir'] . "', '" . $_SESSION['pemakaian-air'] . "', '" . $_SESSION['total-biaya'] . "', '$tanggal')";
-        var_dump($querypembayaran);
+        // var_dump($querypembayaran);
+        // die();
         $execpembayaran = mysqli_query($conn, $querypembayaran);
         if ($execpembayaran) {
             $queryupdatemeterananggota = "UPDATE anggota SET meteran_terakhir = '" . $_SESSION['meteran-akhir'] . "',meteran_bulanlalu = '" . $_SESSION['meteran-awal'] . "', bulan = $bulan  WHERE kode_rumah = '$koderumah'";
@@ -53,7 +54,6 @@ if (isset($_GET['pembayaran'])) {
                 unset($_SESSION['pemakaian-air']);
                 unset($_SESSION['total-biaya']);
                 header("location:../cetak.php?kode=$koderumah");
-                header("location:pembayaran.php");
             }
         } else {
             header("location:?pembayaran=$koderumah&pesan=gagal");
@@ -93,14 +93,14 @@ if (isset($_GET['pembayaran'])) {
     <?php include '../icon.html'; ?>
     <nav class="navbar sticky-top navbar-expand-sm bg-light">
         <div class="container">
-            <a class="navbar-brand" href="../anggota">KSM Daya Tirta</a>
+            <a class="navbar-brand" href="../">KSM Daya Tirta</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="../anggota">Home</a>
+                        <a class="nav-link" href="../anggota">Anggota</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="../pegawai">Pegawai</a>
@@ -323,7 +323,7 @@ if (isset($_GET['pembayaran'])) {
             <div class="col-12 mt-5">
                 <div class="h-100 p-5 bg-light border rounded-4 shadow-sm">
                     <div class="text-center mb-4">
-                        <img src="" class="rounded" alt="LOGO KSM">
+                        <img src="../assets/logo.jpeg" width="70px" class="rounded" alt="LOGO KSM">
                     </div>
                     <form method="GET" action="" class="mx-auto col-8" autocomplete="off">
                         <div class="mb-3">

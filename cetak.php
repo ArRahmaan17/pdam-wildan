@@ -59,7 +59,7 @@ $mpdf->WriteHTML('
   <div style="margin:0;padding:-50px;box-sizing:border-box">
       <table>
       <tr>
-          <td><img src="./assets/img/logoweb.png" width="40px" alt="" srcset=""></td>
+          <td><img src="../assets/logo.jpeg" width="40px" class="rounded" alt="LOGO KSM"></td>
           <td>
               <h6>KELOMPOK SWADAYA MASYARAKAT</h6>
               <h4>DAYA TIRTA</h4>
