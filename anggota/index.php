@@ -13,12 +13,17 @@ if (isset($_GET['keyword'])) {
 	$execcarianggota = mysqli_query($conn, $querycarianggota);
 	$data = mysqli_fetch_all($execcarianggota, MYSQLI_ASSOC);
 }
+$dataanggota = '';
 if (isset($_GET['cektransaksi'])) {
 	$koderumah = $_GET['cektransaksi'];
 	$querycektransaksi = "SELECT * FROM anggota WHERE kode_rumah = '$koderumah'";
 	$execcektransaksi = mysqli_query($conn, $querycarianggota);
-	$dataanggota = mysqli_fetch_array($execcektransaksi, MYSQLI_ASSOC);
+	$dataanggota = mysqli_fetch_row($execcektransaksi);
+	var_dump($dataanggota);
 	$bulan = date("m");
+}
+if (!isset($_GET['cektransaksi'])) {
+	unset($dataanggota);
 }
 ?>
 <!doctype html>
@@ -88,7 +93,7 @@ if (isset($_GET['cektransaksi'])) {
 			<div class="col-12 mt-5">
 				<div class="h-100 p-5 bg-light border rounded-4 shadow-sm">
 					<div class="col-md-8 mx-auto">
-						<h3>Data Anggota <?= $dataanggota['nama_anggota'] ?></h3>
+						<h3>Data Anggota <?= $dataanggota[2] ?></h3>
 						<div class="card mb-3">
 							<div class="card-body">
 								<div class="row shadow-sm py-3">
@@ -96,7 +101,7 @@ if (isset($_GET['cektransaksi'])) {
 										<h6 class="mb-0">Kode Rumah</h6>
 									</div>
 									<div class="col-sm-6 text-secondary">
-										<?= $dataanggota['kode_rumah'] ?>
+										<?= $dataanggota[1] ?>
 									</div>
 								</div>
 								<div class="row shadow-sm py-3">
@@ -104,7 +109,7 @@ if (isset($_GET['cektransaksi'])) {
 										<h6 class="mb-0">Nama Anggota</h6>
 									</div>
 									<div class="col-sm-6 text-secondary">
-										<?= $dataanggota['nama_anggota'] ?>
+										<?= $dataanggota[2] ?>
 									</div>
 								</div>
 								<div class="row shadow-sm py-3">
@@ -112,7 +117,7 @@ if (isset($_GET['cektransaksi'])) {
 										<h6 class="mb-0">Nomer Anggota</h6>
 									</div>
 									<div class="col-sm-6 text-secondary">
-										<?= $dataanggota['nomer_anggota'] ?>
+										<?= $dataanggota[3] ?>
 									</div>
 								</div>
 								<div class="row shadow-sm py-3">
@@ -120,7 +125,7 @@ if (isset($_GET['cektransaksi'])) {
 										<h6 class="mb-0">Nomer Rukun Tetangga</h6>
 									</div>
 									<div class="col-sm-6 text-secondary">
-										<?= $dataanggota['rt'] ?>
+										<?= $dataanggota[4] ?>
 									</div>
 								</div>
 								<div class="row shadow-sm py-3">
@@ -128,7 +133,7 @@ if (isset($_GET['cektransaksi'])) {
 										<h6 class="mb-0">Jenis Kelamin</h6>
 									</div>
 									<div class="col-sm-6 text-secondary">
-										<?php if ($dataanggota['jenis_kelamin'] == 'lk') { ?>
+										<?php if ($dataanggota[5] == 'lk') { ?>
 											Laki Laki
 										<?php } else { ?>
 											Perempuan
@@ -142,12 +147,12 @@ if (isset($_GET['cektransaksi'])) {
 								<h5>Detail Pembayaran</h5>
 								<div class="row border-bottom">
 									<div class="col-5">Meteran Bulan Lalu :</div>
-									<div class="col-7"><?= $dataanggota['meteran_bulanlalu'] ?></div>
+									<div class="col-7"><?= $dataanggota[6] ?></div>
 								</div>
 								<div class="row border-bottom">
 									<div class="col-5">Meteran Bulan Ini :</div>
 									<div class="col-7">
-										<?php if ($dataanggota['bulan'] != $bulan) {
+										<?php if ($dataanggota[8] != $bulan) {
 											echo "Belum Melakukan Pembayaran";
 										} else {
 											echo $dataanggota['meteran_terakhir'];
@@ -155,7 +160,7 @@ if (isset($_GET['cektransaksi'])) {
 								</div>
 								<div class="row border-bottom">
 									<div class="col-5">Bulan Terakhir Melakukan Pembayaran :</div>
-									<div class="col-7"><?= $dataanggota['bulan'] ?></div>
+									<div class="col-7"><?= $dataanggota[8] ?></div>
 								</div>
 							</div>
 						</div>
