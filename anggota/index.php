@@ -63,7 +63,7 @@ if (isset($_GET['cektransaksi'])) {
 							</a>
 							<ul class="dropdown-menu">
 								<li><a class="dropdown-item" href="../pegawai?logout">Logout</a></li>
-								<li><a class="dropdown-item" href="pembayaran.php">Pembayaran PDAM</a></li>
+								<li><a class="dropdown-item" href="../pegawai/pembayaran.php">Pembayaran PDAM</a></li>
 								<li><a class="dropdown-item" href="../pegawai/dataanggota.php">Data Anggota</a></li>
 								<li><a class="dropdown-item" href="../pegawai/pembayaran.php?laporan">Laporan Pembayaran</a></li>
 								<li><a class="dropdown-item" href="../pegawai/informasi.php">Informasi Sistem</a></li>

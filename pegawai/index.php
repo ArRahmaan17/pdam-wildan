@@ -14,10 +14,11 @@ if (isset($_GET['logout'])) {
 }
 if (isset($_POST['prosestambahpegawai'])) {
   $nama = $_POST['nama'];
+  $password = $_POST['password'];
   $nomer = $_POST['nomer_pegawai'];
   $jk = $_POST['jenis_kelamin'];
   $role = $_POST['role'];
-  $query = "INSERT INTO pegawai VALUES(null,'$nama', '$nomer', '$jk', '$role',null)";
+  $query = "INSERT INTO pegawai VALUES(null,'$nama','$password', '$nomer', '$jk', '$role',null)";
   var_dump($query);
   $exec = mysqli_query($conn, $query);
 
@@ -71,8 +72,9 @@ if (isset($_POST['proseseditpegawai'])) {
 if (isset($_GET['login'])) {
   if (isset($_POST['masuk'])) {
     $nama = $_POST['nama'];
+    $password = $_POST['password'];
     $role = $_POST['role'];
-    $query = "SELECT * FROM pegawai WHERE nama_pegawai like '$nama%' AND role = '$role'";
+    $query = "SELECT * FROM pegawai WHERE nama_pegawai like '$nama%' AND password = '$password' AND role = '$role'";
     $exec = mysqli_query($conn, $query);
     $data = mysqli_fetch_all($exec, MYSQLI_ASSOC);
     if (count($data) == 1) {
@@ -153,11 +155,12 @@ if (isset($_GET['tambahanggota'])) {
               <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <?= (isset($_SESSION['nama'])) ? $_SESSION['nama'] : 'Fitur Pegawai' ?>
               </a>
-              <ul class="dropdown-menu dropdown-menu-dark">
+              <ul class="dropdown-menu">
                 <li><a class="dropdown-item" href="../pegawai?logout">Logout</a></li>
                 <li><a class="dropdown-item" href="pembayaran.php">Pembayaran PDAM</a></li>
                 <li><a class="dropdown-item" href="../pegawai/dataanggota.php">Data Anggota</a></li>
                 <li><a class="dropdown-item" href="../pegawai/pembayaran.php?laporan">Laporan Pembayaran</a></li>
+                <li><a class="dropdown-item" href="../pegawai/informasi.php">Informasi Sistem</a></li>
               </ul>
             </li>
           <?php else : ?>
@@ -281,6 +284,10 @@ if (isset($_GET['tambahanggota'])) {
               <label for="nama" class="form-label">Nama Pegawai</label>
               <input required type="text" class="form-control" name="nama" id="nama">
             </div>
+            <div class="mb-3">
+              <label for="password" class="form-label">Password Pegawai</label>
+              <input required type="password" class="form-control" name="password" id="password">
+            </div>
             <label for="nomer_pegawai" class="form-label">Nomer Petugas</label>
             <div class="input-group mb-3">
               <span class="input-group-text" id="basic-addon3">+62</span>
@@ -360,6 +367,10 @@ if (isset($_GET['tambahanggota'])) {
               <label for="nama" class="form-label">Nama Petugas</label>
               <input type="text" class="form-control" name="nama" id="nama" aria-describedby="nama">
               <div id="nama" class="form-text">Masukan Nama Anda</div>
+            </div>
+            <div class="mb-3">
+              <label for="password" class="form-label">Password Petugas</label>
+              <input type="password" class="form-control" name="password" id="password">
             </div>
             <div class="mb-3">
               <select class="form-select" name="role">

@@ -15,7 +15,6 @@ if (isset($_GET['kode'])) {
   // var_dump($datasetting);
   // die();
 }
-// die();
 require_once __DIR__ . '/vendor/autoload.php';
 $mpdf = new \Mpdf\Mpdf(['mode' => 'utf-8', 'format' => [80, 58]]);
 // $mpdf = new \Mpdf\Mpdf(['mode' => 'utf-8', 'format' => 'Folio']);
@@ -36,8 +35,7 @@ $mpdf->WriteHTML('
       box-sizing:border-box;
     }
     body{
-
-      font-size:5px;
+        font-size:6.5px;
         margin:0;
         padding:-200px;
     }
@@ -59,7 +57,7 @@ $mpdf->WriteHTML('
   <div style="margin:0;padding:-50px;box-sizing:border-box">
       <table>
       <tr>
-          <td><img src="../assets/logo.jpeg" width="40px" class="rounded" alt="LOGO KSM"></td>
+          <td><img src="./assets/logo.jpeg" width="40px" class="rounded" alt="LOGO KSM"></td>
           <td>
               <h6>KELOMPOK SWADAYA MASYARAKAT</h6>
               <h4>DAYA TIRTA</h4>
@@ -77,7 +75,7 @@ $mpdf->WriteHTML('
         <td>' . $datadetailpembayaran['tanggal_bayar'] . '</td>
         <td>Stan Meter Awal</td>
         <td>:</td>
-        <td>' . $datadetailpembayaran['meter_awal'] . '</td>
+        <td>' . $datadetailpembayaran['meteran_bulanlalu'] . ' m3</td>
       </tr>
       <tr>
         <td>Kode Rumah</td>
@@ -85,7 +83,7 @@ $mpdf->WriteHTML('
         <td>' . $datadetailpembayaran['kode_rumah'] . '</td>
         <td>Stan Meter Akhir</td>
         <td>:</td>
-        <td>' . $datadetailpembayaran['meter_akhir'] . '</td>
+        <td>' . $datadetailpembayaran['meteran_terakhir'] . ' m3</td>
       </tr>
       <tr>
         <td>Nama Anggota</td>
@@ -93,7 +91,7 @@ $mpdf->WriteHTML('
         <td>' . $datadetailpembayaran['nama_anggota'] . '</td>
         <td>Pemakaian Air</td>
         <td>:</td>
-        <td>' . $datadetailpembayaran['pemakaian_air'] . 'm3</td>
+        <td>' . $datadetailpembayaran['pemakaian_air'] . ' m3</td>
       </tr>
       <tr>
         <td>Alamat</td>
@@ -101,7 +99,7 @@ $mpdf->WriteHTML('
         <td>Gulon RT.' . $datadetailpembayaran['rt'] . '</td>
       </tr>
     </table>
-    <table style="margin-top:30px;">
+    <table style="margin-top:10px;">
       <tr>
         <td style="text-align: right;">Tagihan Air</td>
         <td>:</td>
@@ -110,12 +108,17 @@ $mpdf->WriteHTML('
       <tr>
         <td style="text-align: right;">Biaya Beban</td>
         <td>:</td>
-        <td>Rp.' . number_format($datasetting['biaya_beban'], 2, ',', '.') . '</td>
+        <td>Rp.' . number_format($datasetting['PPN'], 2, ',', '.') . '</td>
       </tr>
-      <tr border="1">
+      <tr>
         <td style="text-align: right;">Total Biaya</td>
         <td>:</td>
-        <td>' . "Rp." . number_format($datadetailpembayaran['total_bayar'], 2, ',', '.') . '</td>
+        <td><span style="border:1px solid; text-align:left;">' . "Rp." . number_format($datadetailpembayaran['total_bayar'], 2, ',', '.') . '</span></td>
+      </tr>
+    </table>
+    <table>
+      <tr>
+        <td style="font-style: italic; text-align:center; padding:3px;" colspan="3">KSM DAYA TIRTA menyatakan bahwa struk ini sebagai bukti pembayaran yang sah</td>
       </tr>
     </table>
   </div>

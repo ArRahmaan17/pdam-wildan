@@ -150,11 +150,12 @@ if (isset($_GET['eksport'])) {
               <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <?= (isset($_SESSION['nama'])) ? $_SESSION['nama'] : 'Fitur Pegawai' ?>
               </a>
-              <ul class="dropdown-menu dropdown-menu-dark">
+              <ul class="dropdown-menu">
                 <li><a class="dropdown-item" href="../pegawai?logout">Logout</a></li>
                 <li><a class="dropdown-item" href="pembayaran.php">Pembayaran PDAM</a></li>
                 <li><a class="dropdown-item" href="../pegawai/dataanggota.php">Data Anggota</a></li>
                 <li><a class="dropdown-item" href="../pegawai/pembayaran.php?laporan">Laporan Pembayaran</a></li>
+                <li><a class="dropdown-item" href="../pegawai/informasi.php">Informasi Sistem</a></li>
               </ul>
             </li>
           <?php else : ?>
