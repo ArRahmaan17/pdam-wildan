@@ -16,7 +16,7 @@ if (isset($_POST['prosestambahpegawai'])) {
   $nama = $_POST['nama'];
   $password = $_POST['password'];
   $nomer = $_POST['nomer_pegawai'];
-  $jk = $_POST['jenis_kelamin'];
+  $jk = $_POST['jabatan'];
   $role = $_POST['role'];
   $query = "INSERT INTO pegawai VALUES(null,'$nama','$password', '$nomer', '$jk', '$role',null)";
   var_dump($query);
@@ -57,12 +57,13 @@ if (isset($_POST['proseseditanggota'])) {
 if (isset($_POST['proseseditpegawai'])) {
   $id = $_POST['id_pegawai'];
   $nama = $_POST['nama_pegawai'];
+  $password = $_POST['password'];
+  $jabatan = $_POST['jabatan'];
   $nomer = $_POST['nomer_pegawai'];
-  $jk = $_POST['jenis_kelamin'];
   $role = $_POST['role'];
 
 
-  $query = "UPDATE pegawai SET nama_pegawai = '$nama', nomer_pegawai = '$nomer', jenis_kelamin = '$jk', role = '$role' WHERE id_pegawai = $id";
+  $query = "UPDATE pegawai SET nama_pegawai = '$nama', password = '$password', nomer_pegawai = '$nomer', jabatan = '$jabatan', role = '$role' WHERE id_pegawai = $id";
   $exec = mysqli_query($conn, $query);
 
   if ($exec) {
@@ -295,11 +296,8 @@ if (isset($_GET['tambahanggota'])) {
             </div>
             <div class="row mb-3">
               <div class="col-6">
-                <label>Jenis Kelamin</label>
-                <select class="form-select" name="jenis_kelamin" aria-label="Default select example">
-                  <option value="lk">Laki Laki</option>
-                  <option value="pr">Perempuan</option>
-                </select>
+                <label>Jabatan Petugas</label>
+                <input required type="text" class="form-control" name="jabatan" id="jabatan">
               </div>
               <div class="col-6">
                 <label>Role Pegawai</label>
@@ -329,17 +327,18 @@ if (isset($_GET['tambahanggota'])) {
               <label for="nama" class="form-label">Nama Petugas</label>
               <input type="text" value="<?= $data['nama_pegawai'] ?>" class="form-control" name="nama_pegawai" id="nama">
             </div>
+            <div class="mb-3">
+              <label for="password" class="form-label">Password Petugas</label>
+              <input type="text" value="<?= $data['password'] ?>" class="form-control" name="password" id="password">
+            </div>
             <label for="basic-url" class="form-label">Nomer Petugas</label>
             <div class="input-group mb-3">
               <span class="input-group-text" id="basic-addon3">+62</span>
               <input type="number" required value="<?= $data['nomer_pegawai'] ?>" class="form-control" name="nomer_pegawai" id="basic-url" aria-describedby="basic-addon3">
             </div>
             <div class="mb-3">
-              <label class="form-label">Jenis Kelamin</label>
-              <select class="form-select" name="jenis_kelamin">
-                <option <?php ($data['jenis_kelamin'] == "lk") ? 'selected' : ''; ?> value="lk">Laki Laki</option>
-                <option <?php ($data['jenis_kelamin'] == "pr") ? 'selected' : ''; ?> value="pr">Perempuan</option>
-              </select>
+              <label for="jabatan" class="form-label">Jabatan Petugas</label>
+              <input type="text" value="<?= $data['jabatan'] ?>" class="form-control" name="jabatan" id="jabatan">
             </div>
             <div class="mb-3">
               <label class="form-label">Bagian Tugas</label>
@@ -403,7 +402,7 @@ if (isset($_GET['tambahanggota'])) {
                   <th class="col-1">#</th>
                   <th class="col-6">Nama Petugas</th>
                   <th class="col-1">Nomer Pegawai</th>
-                  <th class="col-2">Jenis Kelamin</th>
+                  <th class="col-2">Jabatan</th>
                   <?php if (isset($_SESSION['login'])) : ?>
                     <th class="col-2">Edit Data</th>
                   <?php endif ?>
@@ -422,7 +421,7 @@ if (isset($_GET['tambahanggota'])) {
                             <use xlink:href="#wa" />
                           </svg></a>
                       </td>
-                      <td><?= ($p['jenis_kelamin'] == 'lk') ? "Laki Laki" : "Perempuan"; ?></td>
+                      <td><?= $p['jabatan'] ?></td>
                       <?php if (isset($_SESSION['login'])) : ?>
                         <td>
                           <a class="btn btn-warning" href="?editpegawai=<?= $p['id_pegawai'] ?>">Edit Pegawai</a>
