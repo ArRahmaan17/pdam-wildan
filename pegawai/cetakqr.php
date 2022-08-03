@@ -9,7 +9,7 @@ require_once('./../vendor/autoload.php');
 
 if (isset($_GET['kode'])) {
     $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https' : 'http';
-    $full_url = $protocol . "://$_SERVER[HTTP_HOST]/PDAM/pegawai/pembayaran.php?pembayaran=" . $_GET['kode'];
+    $full_url = $protocol . "://$_SERVER[HTTP_HOST]/pegawai/pembayaran.php?pembayaran=" . $_GET['kode'];
 }
 
 $options = new QROptions(
