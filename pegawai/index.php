@@ -8,6 +8,11 @@ $data = mysqli_fetch_all($exec, MYSQLI_ASSOC);
 $queryselectinformasi = "SELECT * FROM informasi WHERE status = 1";
 $execinformasi = mysqli_query($conn, $queryselectinformasi);
 $datainformasi = mysqli_fetch_all($execinformasi, MYSQLI_ASSOC);
+if (isset($_GET['delete'])) {
+  if (mysqli_query($conn, "DELETE FROM pegawai WHERE id_pegawai=" . $_GET['delete'])) {
+    header("location:../pegawai/");
+  }
+}
 if (isset($_GET['logout'])) {
   session_destroy();
   header("Location:../pegawai");
@@ -413,7 +418,7 @@ if (isset($_GET['tambahanggota'])) {
                   <?php $no = 0 ?>
                   <?php foreach ($data as $p) { ?>
                     <?php $no++ ?>
-                    <tr>
+                    <tr class="align-middle">
                       <th scope="row"><?= $no ?></th>
                       <td><?= $p['nama_pegawai'] ?></td>
                       <td>
@@ -424,7 +429,8 @@ if (isset($_GET['tambahanggota'])) {
                       <td><?= $p['jabatan'] ?></td>
                       <?php if (isset($_SESSION['login'])) : ?>
                         <td>
-                          <a class="btn btn-warning" href="?editpegawai=<?= $p['id_pegawai'] ?>">Edit Pegawai</a>
+                          <a class="btn btn-warning my-1" href="?editpegawai=<?= $p['id_pegawai'] ?>">Edit</a>
+                          <a class="btn btn-danger my-1" href="?delete=<?= $p['id_pegawai'] ?>">Delete</a>
                         </td>
                       <?php endif ?>
                     </tr>

@@ -12,6 +12,15 @@ if (isset($_GET['logout'])) {
     session_destroy();
     header("Location:../pegawai");
 }
+if (isset($_GET['delete'])) {
+    $koderumah = $_GET['delete'];
+    if (mysqli_query($conn, "DELETE FROM anggota WHERE kode_rumah = '$koderumah'")) {
+        mysqli_query($conn, "DELETE FROM pembayaran WHERE kode_rumah = '$koderumah'");
+        header("location:dataanggota.php");
+    } else {
+        header("location:dataanggota.php?pesan=gagal");
+    }
+}
 
 
 
@@ -85,17 +94,17 @@ if (isset($_GET['logout'])) {
                     <img src="../assets/logo.jpeg" width="70px" class="rounded" alt="LOGO KSM">
                     <a class="btn btn-info" href="index.php?tambahanggota">Tambah Anggota</a>
                 </div>
-                <div class="table-responsive text-center">
-                    <table class="table text-start">
+                <div class="table-responsive col-12">
+                    <table class="table text-center w-100">
                         <thead>
                             <tr>
-                                <th class="col-1">#</th>
-                                <th class="col-4">Nama Anggota</th>
-                                <th class="col-2">Nomer Anggota</th>
-                                <th class="col-2">Alamat</th>
-                                <th class="col-2">Jenis Kelamin</th>
+                                <th>#</th>
+                                <th class="col">Nama Anggota</th>
+                                <th class="col">Nomer Anggota</th>
+                                <th class="col">Alamat</th>
+                                <th class="col">Jenis Kelamin</th>
                                 <?php if (isset($_SESSION['login'])) : ?>
-                                    <th class="col-2">Edit Data</th>
+                                    <th class="col">Edit Data</th>
                                 <?php endif ?>
                             </tr>
                         </thead>
@@ -105,7 +114,7 @@ if (isset($_GET['logout'])) {
                                 <?php foreach ($data as $p) { ?>
                                     <?php $no++ ?>
                                     <tr class="align-middle">
-                                        <th scope="row"><?= $no ?></th>
+                                        <th><?= $no ?></th>
                                         <td><?= $p['nama_anggota'] ?></td>
                                         <td>
                                             <a class="text-success" target="_blank" href="https://wa.me/62<?= $p['nomer_anggota'] ?>">
@@ -117,9 +126,12 @@ if (isset($_GET['logout'])) {
                                         <td><?= $p['rt'] ?></td>
                                         <td><?= ($p['jenis_kelamin'] == 'lk') ? "Laki Laki" : "Perempuan"; ?></td>
                                         <?php if (isset($_SESSION['login'])) : ?>
-                                            <td class="d-flex">
-                                                <a class="btn btn-warning mx-1" href="../pegawai/?editanggota=<?= $p['id_anggota'] ?>">Edit Anggota</a>
-                                                <a class="btn btn-success mx-1" target="blank" href="cetakqr.php?kode=<?= $p['kode_rumah'] ?>">Cetak Qr Code Anggota</a>
+                                            <td>
+                                                <!-- <div class="row"> -->
+                                                <a class="btn btn-danger text-truncate col my-1" href="dataanggota.php?delete=<?= $p['kode_rumah'] ?>">Delete</a>
+                                                <a class="btn btn-warning text-truncate col my-1" href="../pegawai/?editanggota=<?= $p['id_anggota'] ?>">Edit</a>
+                                                <a class="btn btn-success text-truncate col my-1" target="blank" href="cetakqr.php?kode=<?= $p['kode_rumah'] ?>">Cetak Qr</a>
+                                                <!-- </div> -->
                                             </td>
                                         <?php endif ?>
                                     </tr>
